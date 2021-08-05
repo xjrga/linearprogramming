@@ -5,10 +5,10 @@ Linear Programing Problems (Experimental)
 Home page: https://xjrga.github.io/linearprogramming
     
 Features:
-    - Solve linear programming problems
-    - Solve linear programming problems in a database
-    - facilitate learning/teaching anyone with interest in nutrition
-    - is free and open source
+   - Solve linear programming problems
+   - Solve linear programming problems in a database
+   - facilitate learning/teaching anyone with interest in linear programming
+   - is free and open source
     
 Requirements:
    - Java 11
