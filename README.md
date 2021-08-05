@@ -1,5 +1,3 @@
-[LinearProgramming](https://xjrga.github.io/linearprogramming "Linear Programming Problems")
-
 Linear Programing Problems (Experimental)
     
 Home page: https://xjrga.github.io/linearprogramming
