@@ -124,9 +124,10 @@ public class TestLPModelTest {
         LPModel.addLinearConstraint(coefficients1, LPModel.GEQ, amount1);
 
         //Ratio constraint
-        double[] coefficients2 = new double[]{-2, 1};
+        oar = new Object[]{-2.0, 1.0};
+        Array coefficients2 = new JDBCArrayBasic(oar, org.hsqldb.types.Type.SQL_DOUBLE);
         double amount2 = 0;
-        LPModel.addLinearConstraintPrimitive(coefficients2, LPModel.EQ, amount2);
+        LPModel.addLinearConstraint(coefficients2, LPModel.EQ, amount2);
 
         //Print model
         System.out.println(LPModel.printModel());
@@ -143,7 +144,7 @@ public class TestLPModelTest {
         String actualModel = LPModel.printModel();
 
         double[] expectedQuantity = new double[]{235.294117647059, 470.588235294118};
-        double[] actualQuantity = LPModel.getSolutionPointPrimitive();
+        double[] actualQuantity = convert(LPModel.getSolutionPoint());
 
         double expectedCost = 2.35294117647059;
         double actualCost = LPModel.getSolutionCost();
