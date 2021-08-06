@@ -1,3 +1,5 @@
+SET SCHEMA LinearProgramming;
+/
 CREATE PROCEDURE solveModel01 (
 )
 MODIFIES SQL DATA BEGIN ATOMIC

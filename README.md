@@ -3,17 +3,18 @@ Linear Programing Problems (Experimental)
 Home page: https://xjrga.github.io/linearprogramming
     
 Features:
-   - Solve linear programming problems
-   - Solve linear programming problems in a database
-   - facilitate learning/teaching anyone with interest in linear programming
+   - solve linear programming problems
+   - solve linear programming problems in a database
+   - facilitate linear programming learning/teaching
    - is free and open source
+   - created with [PotatoSql](https://xjrga.github.io/potatosql "PotatoSql")
     
 Requirements:
    - Java 11
 
 Build
 
-    00
+    01
 
 Authors
 
@@ -32,10 +33,10 @@ Snack uses the following libraries:
 
 Instructions:
    - Start database using startDatabase.sh script
-   - Run sql scripts in data/develop/sql directory in order (01,02,03)
+   - Run sql scripts found in data/develop/sql directory in order (00,01,02,03,04,05,06)
    - Test the different procedures
 
 Notes:
    - Look at startDatabase.sh script
-   - linearprograming-00-jar-with-dependencies.jar must be in hsqldb's classpath
+   - linearprograming-01-jar-with-dependencies.jar must be in hsqldb's classpath
     
