@@ -14,7 +14,7 @@ Requirements:
 
 Build
 
-    01
+    02
 
 Authors
 
@@ -33,10 +33,10 @@ Snack uses the following libraries:
 
 Instructions:
    - Start database using startDatabase.sh script
-   - Run sql scripts found in data/develop/sql directory in order (00,01,02,03,04,05,06)
+   - Run sql scripts found in data/develop/sql directory in order (00,01,02,03,04)
    - Test the different procedures
 
 Notes:
    - Look at startDatabase.sh script
-   - linearprograming-01-jar-with-dependencies.jar must be in hsqldb's classpath
+   - linearprograming-02-jar-with-dependencies.jar must be in hsqldb's classpath
     

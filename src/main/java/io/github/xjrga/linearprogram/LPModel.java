@@ -25,11 +25,11 @@ import org.hsqldb.jdbc.JDBCArrayBasic;
  */
 public class LPModel {
 
-    private static ArrayList<LinearConstraint> constraints = new ArrayList();
+    private static final ArrayList<LinearConstraint> constraints = new ArrayList();
     private static LinearObjectiveFunction linearObjectiveFunction;
     private static double[] point;
     private static double cost;
-    private static LPFormat lpFormat = new LPFormat();
+    private static final LPFormat lpFormat = new LPFormat();
     public static final int GEQ = 1;
     public static final int LEQ = 2;
     public static final int EQ = 3;

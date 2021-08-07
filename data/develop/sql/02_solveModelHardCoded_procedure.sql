@@ -1,6 +1,6 @@
-SET SCHEMA LinearProgramming;
+SET SCHEMA Model;
 /
-CREATE PROCEDURE solveModel01 (
+CREATE PROCEDURE solveModelHardCoded (
 )
 MODIFIES SQL DATA BEGIN ATOMIC
 --
@@ -22,10 +22,10 @@ SET v_constraint0_value = 40;
 SET  v_constraint1 = ARRAY [-2, 1];
 SET v_constraint1_value = 0;
 --
-CALL addLinearObjectiveFunction(v_objective);
-CALL  addLinearConstraint(v_constraint0, v_geq, v_constraint0_value);
-CALL  addLinearConstraint(v_constraint1, v_eq, v_constraint1_value);
-CALL solveModel();
+CALL LinearProgramming.addLinearObjectiveFunction(v_objective);
+CALL  LinearProgramming.addLinearConstraint(v_constraint0, v_geq, v_constraint0_value);
+CALL  LinearProgramming.addLinearConstraint(v_constraint1, v_eq, v_constraint1_value);
+CALL LinearProgramming.solveModel();
 --
 END;
 /
