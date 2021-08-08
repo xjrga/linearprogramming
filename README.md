@@ -33,7 +33,7 @@ Snack uses the following libraries:
 
 Instructions:
    - Start database using startDatabase.sh script
-   - Run sql scripts found in data/develop/sql directory in order (00,01,02,03,04)
+   - Run sql scripts found in data/develop/sql directory in order (check notes)
    - Test the different procedures
 
 Notes:
