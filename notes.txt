@@ -31,3 +31,6 @@ This throws error.
 07_testProblem02UsesTables.sql
 06_testProblem01UserTables.sql
 --incompatible data type in conversion [SQL State=42561, DB Errorcode=-5561]
+
+* If I do a "drop schema model cascade" and recreate schema, it runs fine again.
+
