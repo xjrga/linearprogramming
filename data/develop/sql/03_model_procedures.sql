@@ -1,52 +1,3 @@
-DROP SCHEMA LinearProgramming IF EXISTS CASCADE;
-/
-CREATE SCHEMA LinearProgramming;
-/
-SET SCHEMA LinearProgramming;
-/
-CREATE PROCEDURE  addLinearObjectiveFunction(IN a DOUBLE ARRAY)
-NO SQL
-LANGUAGE JAVA 
-PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addLinearObjectiveFunction'
-/
-CREATE PROCEDURE  addLinearConstraint(IN coefficients DOUBLE ARRAY, IN rel INT, IN amount DOUBLE)
-NO SQL
-LANGUAGE JAVA 
-PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addLinearConstraint'
-/
-CREATE PROCEDURE  solveModel()
-NO SQL
-LANGUAGE JAVA 
-PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.solveModel'
-/
-CREATE FUNCTION printModel() RETURNS LONGVARCHAR
-LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.printModel'
-/
-CREATE FUNCTION getSolutionCost() RETURNS DOUBLE
-LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getSolutionCost'
-/
-CREATE FUNCTION getSolutionPoint() RETURNS DOUBLE ARRAY
-LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getSolutionPoint'
-/
-CREATE FUNCTION getSolutionPointVariableValue(v_problemId INTEGER,v_variableId INTEGER) RETURNS DOUBLE
-BEGIN ATOMIC
-DECLARE v_corrected_variable INTEGER;
-SET v_corrected_variable = v_variableId + 1;
-RETURN getSolutionPoint()[v_corrected_variable];
-END
-/
-CREATE PROCEDURE  clearModel()
-NO SQL
-LANGUAGE JAVA 
-PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.clearModel'
-/
 SET SCHEMA Model;
 /
 CREATE PROCEDURE Problem_Merge (
@@ -284,17 +235,22 @@ IN v_problemId INTEGER
 MODIFIES SQL DATA BEGIN ATOMIC
 --
 DECLARE solutionPointVariableValue DOUBLE;
+DECLARE solutionPoint DOUBLE ARRAY;
 DECLARE solutionCost DOUBLE;
 DECLARE lpformatModel LONGVARCHAR;
 DECLARE solutionConstraintLhsSolutionValue DOUBLE;
+DECLARE n INTEGER;
+--
+SET solutionCost = LinearProgramming.getSolutionCost();
+SET lpformatModel = LinearProgramming.printModel();
+SET solutionPoint =  LinearProgramming.getSolutionPoint();
+SET n = 0;
 --
 FOR SELECT variableid FROM variable WHERE problemid = v_problemId DO
 --
-SET solutionPointVariableValue =  LinearProgramming.getSolutionPointVariableValue(v_problemId,variableid);
-SET solutionCost = LinearProgramming.getSolutionCost();
-SET lpformatModel = LinearProgramming.printModel();
+SET n = n + 1;
 --
-CALL Variable_Update(v_problemId,variableid,solutionPointVariableValue);
+CALL Variable_Update(v_problemId,variableid,solutionPoint[n]);
 --
 END FOR;
 --
@@ -343,8 +299,6 @@ DECLARE v_constraint_coefficients DOUBLE ARRAY;
 DECLARE v_constraint_relationship INTEGER;
 DECLARE v_constraint_value DOUBLE;
 --
-CALL LinearProgramming.clearModel();
---
 SET v_objective_coefficients = getObjectiveCoefficients(v_problemId);
 --
 CALL  LinearProgramming.addLinearObjectiveFunction(v_objective_coefficients);
@@ -360,8 +314,6 @@ CALL  LinearProgramming.addLinearConstraint(v_constraint_coefficients, v_constra
 END FOR;
 --
 CALL LinearProgramming.solveModel();
---
-CALL saveModel(v_problemId);
 --
 END;
 /

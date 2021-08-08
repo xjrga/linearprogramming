@@ -15,3 +15,12 @@ call ConstraintLhs_Merge(0,1,1,1.00,-1.0);
 --ProblemId, VariableId, ConstraintLhsValue
 call Objective_Merge(0,0,0.002);
 call Objective_Merge(0,1,0.004);
+--Run
+CALL LinearProgramming.clearModel();
+call model.solveModel(0);
+--Save
+call model.saveModel(0);
+--Print
+call model.Problem_Select(0);
+call model.Variable_Select(0);
+call model.ConstraintLhs_Select(0);

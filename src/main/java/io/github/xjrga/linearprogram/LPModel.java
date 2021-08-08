@@ -33,15 +33,18 @@ public class LPModel {
     public static final int GEQ = 1;
     public static final int LEQ = 2;
     public static final int EQ = 3;
+    private static GoalType goalType = GoalType.MINIMIZE;
 
     public LPModel() {
     }
 
     public static void clearModel() {
+        goalType = GoalType.MINIMIZE;
         constraints.clear();
-        lpFormat.clear();
-        point = new double[]{-1.0,-1.0};
+        linearObjectiveFunction = null;
+        point = new double[]{-1.0, -1.0};
         cost = -1.0;
+        lpFormat.clear();
     }
 
     public static void addLinearObjectiveFunctionPrimitive(double[] coefficients) {
@@ -80,12 +83,16 @@ public class LPModel {
         LPModel.addLinearConstraintPrimitive(doubleArray, rel, amount);
     }
 
+    public static void setMaximize() {
+        goalType = GoalType.MAXIMIZE;
+        lpFormat.setMaximize();
+    }
+
     public static void solveModel() {
         SimplexSolver s = new SimplexSolver();
         LinearConstraintSet linearConstraintSet = new LinearConstraintSet(constraints);
-        GoalType GOALTYPE = GoalType.MINIMIZE;
         NonNegativeConstraint nonNegativeConstraint = new NonNegativeConstraint(true);
-        OptimizationData[] data = new OptimizationData[]{linearObjectiveFunction, linearConstraintSet, GOALTYPE, nonNegativeConstraint};
+        OptimizationData[] data = new OptimizationData[]{linearObjectiveFunction, linearConstraintSet, goalType, nonNegativeConstraint};
         PointValuePair optimize = s.optimize(data);
         point = optimize.getPoint();
         cost = optimize.getSecond();

@@ -6,14 +6,20 @@ package io.github.xjrga.linearprogram;
 public class LPFormat {
 
     private final StringBuilder sb;
+    private boolean maximizeIsOn = false;
 
     public LPFormat() {
 
         sb = new StringBuilder();
     }
 
-    public void clear(){
+    public void clear() {
         sb.setLength(0);
+        maximizeIsOn = false;
+    }
+
+    public void setMaximize() {
+        this.maximizeIsOn = true;
     }
 
     public void objectiveToLp(double[] coefficients) {
@@ -21,7 +27,11 @@ public class LPFormat {
         sb.append("/* Objective function */");
         sb.append("\n");
 
-        sb.append("min: ");
+        if (maximizeIsOn) {
+            sb.append("max: ");
+        } else {
+            sb.append("min: ");
+        }
 
         for (int i = 0; i < coefficients.length; i++) {
 

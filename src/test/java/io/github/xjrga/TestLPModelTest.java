@@ -184,4 +184,58 @@ public class TestLPModelTest {
             System.out.println(i + ": " + d);
         }
     }
+
+    @Test
+    public void testSolve2() {
+
+        LPModel.clearModel();
+
+        LPModel.setMaximize();
+
+        //Cost objective function
+        double[] coefficients0 = new double[]{300, 200};
+        LPModel.addLinearObjectiveFunctionPrimitive(coefficients0);
+
+        //Process 1
+        double[] coefficients1 = new double[]{8, 4};
+        double amount1 = 32;
+        LPModel.addLinearConstraintPrimitive(coefficients1, LPModel.LEQ, amount1);
+
+        //Process 2
+        double[] coefficients2 = new double[]{6, 5};
+        double amount2 = 30;
+        LPModel.addLinearConstraintPrimitive(coefficients2, LPModel.LEQ, amount2);
+
+        //Process 3
+        double[] coefficients3 = new double[]{5, 8};
+        double amount3 = 40;
+        LPModel.addLinearConstraintPrimitive(coefficients3, LPModel.LEQ, amount3);
+
+        //Print model
+        System.out.println(LPModel.printModel());
+
+        //Solution
+        LPModel.solveModel();
+
+        //Test
+        String expectedModel = "/* Objective function */\n"
+                + "max: 300.0 x0 + 200.0 x1;\n"
+                + "/* Variable bounds */\n"
+                + "8.0 x0 + 4.0 x1 <= 32.0;\n"
+                + "6.0 x0 + 5.0 x1 <= 30.0;\n"
+                + "5.0 x0 + 8.0 x1 <= 40.0;\n";
+        String actualModel = LPModel.printModel();
+
+        double[] expectedQuantity = new double[]{2.5, 3};
+        double[] actualQuantity = LPModel.getSolutionPointPrimitive();
+
+        double expectedCost = 1350;
+        double actualCost = LPModel.getSolutionCost();
+
+        Assert.assertEquals(actualModel, expectedModel);
+        Assert.assertEquals(actualQuantity, expectedQuantity, .00001);
+        Assert.assertEquals(actualCost, expectedCost, .00001);
+
+    }
+
 }

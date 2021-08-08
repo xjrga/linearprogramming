@@ -1,0 +1,33 @@
+This runs fine.
+01_linearprogramming_procedures.sql
+04_testProblem01.sql
+05_testProblem02.sql
+08_runTests.sql
+
+This runs fine.
+01_linearprogramming_procedures.sql
+02_model_schema.sql
+03_model.procedures.sql
+06_testProblem01UserTables.sql
+
+This runs fine.
+01_linearprogramming_procedures.sql
+02_model_schema.sql
+03_model.procedures.sql
+07_testProblem02UsesTables.sql
+
+This throws error.
+01_linearprogramming_procedures.sql
+02_model_schema.sql
+03_model.procedures.sql
+06_testProblem01UserTables.sql
+07_testProblem02UsesTables.sql
+--incompatible data type in conversion [SQL State=42561, DB Errorcode=-5561]
+
+This throws error.
+01_linearprogramming_procedures.sql
+02_model_schema.sql
+03_model.procedures.sql
+07_testProblem02UsesTables.sql
+06_testProblem01UserTables.sql
+--incompatible data type in conversion [SQL State=42561, DB Errorcode=-5561]
