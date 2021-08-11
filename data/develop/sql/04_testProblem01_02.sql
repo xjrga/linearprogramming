@@ -11,10 +11,16 @@ DECLARE v_leq INT;
 DECLARE v_eq INT;
 DECLARE v_constraint0_value DOUBLE;
 DECLARE v_constraint1_value DOUBLE;
-DECLARE resultPointVariable01 CURSOR FOR SELECT LinearProgramming.getSolutionPointVariable(0) FROM (VALUES(0));
-DECLARE resultPointVariable02 CURSOR FOR SELECT LinearProgramming.getSolutionPointVariable(1) FROM (VALUES(0));
-DECLARE resultCost CURSOR FOR SELECT LinearProgramming.getSolutionCost() FROM (VALUES(0));
-DECLARE resultModel CURSOR FOR SELECT LinearProgramming.printModel() FROM (VALUES(0));
+--
+DECLARE solutionPointValueAt CURSOR FOR SELECT LinearProgramming.getSolutionPointValueAt(i) as SolutionPoint FROM (SELECT rownum()-1 as i FROM INFORMATION_SCHEMA.Columns) WHERE i < LinearProgramming.getVariableCount();
+DECLARE solutionCost CURSOR FOR SELECT LinearProgramming.getSolutionCost() as SolutionCost FROM (VALUES(0));
+DECLARE solutionModel CURSOR FOR SELECT LinearProgramming.printModel() as Model FROM (VALUES(0));
+DECLARE solutionPointValue CURSOR FOR SELECT LinearProgramming.getSolutionPoint() as SolutionPoint FROM (VALUES(0));
+DECLARE LhsByConstraint CURSOR FOR SELECT LinearProgramming.getLhsByConstraint(i) as ConstraintRow FROM (SELECT rownum()-1 as i FROM INFORMATION_SCHEMA.Columns) WHERE i < LinearProgramming.getConstraintCount();
+DECLARE LhsByVariable CURSOR FOR SELECT LinearProgramming.getLhsByVariable(i) as ConstraintColumn FROM (SELECT rownum()-1 as i FROM INFORMATION_SCHEMA.Columns) WHERE i < LinearProgramming.getVariableCount();
+DECLARE LhsValueAt CURSOR FOR SELECT LinearProgramming.getLhsValueAt(y,x) as ConstraintElementValue FROM (SELECT x, y FROM (SELECT rownum() -1 AS x FROM INFORMATION_SCHEMA.Columns WHERE rownum() -1 < LinearProgramming.getVariableCount()) a, (SELECT rownum() -1 AS y FROM INFORMATION_SCHEMA.Columns WHERE rownum() -1 < LinearProgramming.getConstraintCount()) b);
+DECLARE Rhs CURSOR FOR SELECT LinearProgramming.getRhs() as ConstraintValue FROM (VALUES(0));
+DECLARE RhsByConstraint CURSOR FOR SELECT LinearProgramming.getRhsByConstraint(i) as ConstraintValue FROM (SELECT rownum()-1 as i FROM INFORMATION_SCHEMA.Columns) WHERE i < LinearProgramming.getConstraintCount();
 --
 SET v_geq = 1;
 SET v_leq = 2;
@@ -44,10 +50,18 @@ CALL  LinearProgramming.addLinearConstraint(2, v_eq, v_constraint1_value);
 --
 CALL LinearProgramming.solveModel();
 --
-OPEN resultPointVariable01;
-OPEN resultPointVariable02;
-OPEN resultCost;
-OPEN resultModel;
+OPEN solutionPointValueAt;
+OPEN solutionCost;
+OPEN solutionModel;
+OPEN solutionPointValue;
+OPEN LhsByConstraint;
+OPEN LhsByVariable;
+OPEN LhsValueAt;
+OPEN Rhs;
+OPEN RhsByConstraint;
 --
 END;
 /
+
+--drop procedure testProblem01_lpmodel02;
+--call testProblem01_lpmodel02();

@@ -5,6 +5,7 @@
  */
 package io.github.xjrga.linearprogram;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.apache.commons.math3.optim.linear.NonNegativeConstraint;
 import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.hsqldb.jdbc.JDBCArrayBasic;
 
 /**
  *
@@ -34,7 +36,7 @@ public class LPModel02 {
     public static final int LEQ = 2;
     public static final int EQ = 3;
     private static GoalType goalType = GoalType.MINIMIZE;
-    private static final Map<Integer, List> coefficients = new HashMap();
+    private static final Map<Integer, List> coefficientsMap = new HashMap();
     private static List currentStorage;
 
     public LPModel02() {
@@ -47,18 +49,18 @@ public class LPModel02 {
         point = new double[]{-1.0, -1.0};
         cost = -1.0;
         lpFormat.clear();
-        coefficients.clear();
+        coefficientsMap.clear();
         currentStorage = null;
     }
 
-    public static void addLinearObjectiveFunction(int constraintId) {
-        double[] coefficients = convert(getStorage(constraintId));
+    public static void addLinearObjectiveFunction(int storageId) {
+        double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         byte constantTerm = 0;
         linearObjectiveFunction = new LinearObjectiveFunction(coefficients, constantTerm);
         lpFormat.objectiveToLp(coefficients);
     }
 
-    public static void addLinearConstraint(int constraintId, int rel, double amount) {
+    public static void addLinearConstraint(int storageId, int rel, double amount) {
         Relationship relationship = null;
         switch (rel) {
             case 1:
@@ -74,7 +76,7 @@ public class LPModel02 {
                 relationship = Relationship.GEQ;
                 break;
         }
-        double[] coefficients = convert(getStorage(constraintId));
+        double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         constraints.add(new LinearConstraint(coefficients, relationship, amount));
         lpFormat.constraintToLp(coefficients, rel, amount);
     }
@@ -94,12 +96,33 @@ public class LPModel02 {
         cost = optimize.getSecond();
     }
 
-    public static double getSolutionPointVariable(int i) {
+    public static String printModel() {
+        return lpFormat.getModel();
+    }
+
+    public static void addCoefficientSpace(int storageId) {
+        coefficientsMap.put(storageId, new ArrayList<Double>());
+    }
+
+    public static void setCoefficientSpace(int storageId) {
+        currentStorage = getStorage(storageId);
+    }
+
+    public static void addCoefficient(double coefficient) {
+        currentStorage.add(coefficient);
+    }
+
+    public static Array getSolutionPoint() {
+        Array array = doubleToArray(getSolutionPointPrimitive());
+        return array;
+    }
+
+    public static double getSolutionPointValueAt(int x) {
         double d = -1;
-        if (i > -1 && i < point.length) {
-            d = point[i];
+        if (x > -1 && x < point.length) {
+            d = point[x];
         } else {
-            throw new IllegalStateException(i+"is out of range");
+            throw new IllegalStateException(x + "is out of range");
         }
         return d;
     }
@@ -108,27 +131,98 @@ public class LPModel02 {
         return cost;
     }
 
-    public static String printModel() {
-        return lpFormat.getModel();
+    public static int getVariableCount() {
+        return point.length;
     }
 
-    public static void addCoefficientSpace(int id) {
-        coefficients.put(id, new ArrayList<Double>());
+    public static int getConstraintCount() {
+        return constraints.size();
     }
 
-    public static void setCoefficientSpace(int id) {
-        currentStorage = getStorage(id);
+    public static Array getLhsByConstraint(int y) {
+        Array array = doubleToArray(getLhsByConstraintPrimitive(y));
+        return array;
     }
 
-    public static void addCoefficient(double c) {
-        currentStorage.add(c);
+    public static Array getLhsByVariable(int x) {
+        Array array = doubleToArray(getLhsByVariablePrimitive(x));
+        return array;
     }
 
-    private static List getStorage(int id) {
-        return coefficients.get(id);
+    public static double getLhsValueAt(int y, int x) {
+        double d;
+        if (y > -1 && y < constraints.size()) {
+            double[] coeffs = constraints.get(y).getCoefficients().toArray();
+            if (x > -1 && x < point.length) {
+                d = coeffs[x] * point[x];
+            } else {
+                throw new IllegalStateException(x + "is out of range");
+            }
+        } else {
+            throw new IllegalStateException(y + "is out of range");
+        }
+        return d;
     }
 
-    private static double[] convert(List<Double> list) {
+    public static Array getRhs() {
+        Array array = doubleToArray(getRhsByConstraintPrimitive());
+        return array;
+    }
+
+    public static double getRhsByConstraint(int y) {
+        double rhsValue = 0;
+        double[] coeffs = constraints.get(y).getCoefficients().toArray();
+        for (int x = 0; x < point.length; x++) {
+            rhsValue += coeffs[x] * point[x];
+        }
+        return rhsValue;
+    }
+
+    //Private methods
+    
+    private static double[] getRhsByConstraintPrimitive() {
+        double[] rowArray = new double[constraints.size()];
+        for (int y = 0; y < constraints.size(); y++) {
+            rowArray[y] = getRhsByConstraint(y);
+        }
+        return rowArray;
+    }
+
+    private static double[] getSolutionPointPrimitive() {
+        return point;
+    }
+
+    private static double[] getLhsByConstraintPrimitive(int y) {
+        double[] rowArray = new double[point.length];
+        if (y > -1 && y < constraints.size()) {
+            double[] coeffs = constraints.get(y).getCoefficients().toArray();
+            for (int x = 0; x < point.length; x++) {
+                rowArray[x] = coeffs[x] * point[x];
+            }
+        } else {
+            throw new IllegalStateException(y + "is out of range");
+        }
+        return rowArray;
+    }
+
+    private static double[] getLhsByVariablePrimitive(int x) {
+        double[] columnArray = new double[constraints.size()];
+        if (x > -1 && x < point.length) {
+            for (int y = 0; y < constraints.size(); y++) {
+                double[] coeffs = constraints.get(y).getCoefficients().toArray();
+                columnArray[y] = coeffs[x] * point[x];
+            }
+        } else {
+            throw new IllegalStateException(x + "is out of range");
+        }
+        return columnArray;
+    }
+
+    private static List getStorage(int storageId) {
+        return coefficientsMap.get(storageId);
+    }
+
+    private static double[] listToDoubleArrayPrimitive(List<Double> list) {
         double[] dar = new double[list.size()];
         for (int i = 0; i < dar.length; i++) {
             dar[i] = list.get(i);
@@ -136,4 +230,12 @@ public class LPModel02 {
         return dar;
     }
 
+    private static Array doubleToArray(double[] dar) {
+        Object[] objects = new Object[dar.length];
+        for (int i = 0; i < dar.length; i++) {
+            objects[i] = dar[i];
+        }
+        Array array = new JDBCArrayBasic(objects, org.hsqldb.types.Type.SQL_DOUBLE);
+        return array;
+    }
 }

@@ -230,7 +230,7 @@ DECLARE solutionCost DOUBLE;
 DECLARE lpformatModel LONGVARCHAR;
 DECLARE solutionConstraintLhsSolutionValue DOUBLE;
 DECLARE n INTEGER;
-DECLARE solutionPointVariable DOUBLE;
+DECLARE solutionPointValueAt DOUBLE;
 --
 SET solutionCost = LinearProgramming.getSolutionCost();
 SET lpformatModel = LinearProgramming.printModel();
@@ -238,8 +238,8 @@ SET n = 0;
 --
 FOR SELECT variableid FROM variable WHERE problemid = v_problemId DO
 --
-SELECT LinearProgramming.getSolutionPointVariable(n) INTO solutionPointVariable FROM (VALUES(0));
-CALL Variable_Update(v_problemId,variableid,solutionPointVariable);
+SELECT LinearProgramming.getSolutionPointValueAt(n) INTO solutionPointValueAt FROM (VALUES(0));
+CALL Variable_Update(v_problemId,variableid,solutionPointValueAt);
 SET n = n + 1;
 --
 END FOR;
