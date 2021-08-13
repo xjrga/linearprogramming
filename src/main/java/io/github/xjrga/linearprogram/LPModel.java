@@ -6,8 +6,10 @@
 package io.github.xjrga.linearprogram;
 
 import java.sql.Array;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.math3.optim.OptimizationData;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.linear.LinearConstraint;
@@ -34,31 +36,33 @@ public class LPModel {
     public static final int LEQ = 2;
     public static final int EQ = 3;
     private static GoalType goalType = GoalType.MINIMIZE;
+    private static final Map<Integer, List> coefficientsMap = new HashMap();
+    private static List currentStorage;
 
     public LPModel() {
+//        synchronized (LPModel.class) {
+//        }
     }
 
-    public static void clearModel() {
+    public static synchronized void clearModel() {
         goalType = GoalType.MINIMIZE;
         constraints.clear();
         linearObjectiveFunction = null;
         point = new double[]{-1.0, -1.0};
         cost = -1.0;
         lpFormat.clear();
+        coefficientsMap.clear();
+        currentStorage = null;
     }
 
-    public static void addLinearObjectiveFunctionPrimitive(double[] coefficients) {
+    public static synchronized void addLinearObjectiveFunction(int storageId) {
+        double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         byte constantTerm = 0;
         linearObjectiveFunction = new LinearObjectiveFunction(coefficients, constantTerm);
         lpFormat.objectiveToLp(coefficients);
     }
 
-    public static void addLinearObjectiveFunction(Array coefficients) {
-        double[] doubleArray = LPModel.convert(coefficients);
-        LPModel.addLinearObjectiveFunctionPrimitive(doubleArray);
-    }
-
-    public static void addLinearConstraintPrimitive(double[] coefficients, int rel, double amount) {
+    public static synchronized void addLinearConstraint(int storageId, int rel, double amount) {
         Relationship relationship = null;
         switch (rel) {
             case 1:
@@ -74,21 +78,17 @@ public class LPModel {
                 relationship = Relationship.GEQ;
                 break;
         }
+        double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         constraints.add(new LinearConstraint(coefficients, relationship, amount));
         lpFormat.constraintToLp(coefficients, rel, amount);
     }
 
-    public static void addLinearConstraint(Array coefficients, int rel, double amount) {
-        double[] doubleArray = LPModel.convert(coefficients);
-        LPModel.addLinearConstraintPrimitive(doubleArray, rel, amount);
-    }
-
-    public static void setMaximize() {
+    public static synchronized void setMaximize() {
         goalType = GoalType.MAXIMIZE;
         lpFormat.setMaximize();
     }
 
-    public static void solveModel() {
+    public static synchronized void solveModel() {
         SimplexSolver s = new SimplexSolver();
         LinearConstraintSet linearConstraintSet = new LinearConstraintSet(constraints);
         NonNegativeConstraint nonNegativeConstraint = new NonNegativeConstraint(true);
@@ -98,41 +98,150 @@ public class LPModel {
         cost = optimize.getSecond();
     }
 
-    public static double[] getSolutionPointPrimitive() {
-        return point;
-    }
-
-    public static Array getSolutionPoint() {
-        Object[] objects = new Object[point.length];
-        for (int i = 0; i < point.length; i++) {
-            objects[i] = point[i];
-        }
-        Array array = new JDBCArrayBasic(objects, org.hsqldb.types.Type.SQL_DOUBLE);
-        return array;
-    }
-
-    public static double getSolutionCost() {
-        return cost;
-    }
-
-    public static String printModel() {
+    public static synchronized String printModel() {
         return lpFormat.getModel();
     }
 
-    private static double[] convert(Array array) {
-        double[] dar = null;
-        try {
-            Object[] object = (Object[]) array.getArray();
-            dar = new double[object.length];
-            int size = object.length;
-            for (int i = 0; i < size; i++) {
-                Object o = object[i];
-                dar[i] = (double) o;
-            }
-        } catch (SQLException ex) {
+    public static synchronized void addCoefficientSpace(int storageId) {
+        coefficientsMap.put(storageId, new ArrayList<Double>());
+    }
 
+    public static synchronized void setCoefficientSpace(int storageId) {
+        currentStorage = getStorage(storageId);
+    }
+
+    public static synchronized void addCoefficient(double coefficient) {
+        currentStorage.add(coefficient);
+    }
+
+    public static synchronized Array getSolutionPoint() {
+        Array array = doubleToArray(getSolutionPointPrimitive());
+        return array;
+    }
+
+    public static synchronized double getSolutionPointValueAt(int x) {
+        double d = -1;
+        if (x > -1 && x < point.length) {
+            d = point[x];
+        } else {
+            throw new IllegalStateException(x + "is out of range");
+        }
+        return d;
+    }
+
+    public static synchronized double getSolutionCost() {
+        return cost;
+    }
+
+    public static synchronized int getVariableCount() {
+        return point.length;
+    }
+
+    public static synchronized int getConstraintCount() {
+        return constraints.size();
+    }
+
+    public static synchronized Array getLhsByConstraint(int y) {
+        Array array = doubleToArray(getLhsByConstraintPrimitive(y));
+        return array;
+    }
+
+    public static synchronized Array getLhsByVariable(int x) {
+        Array array = doubleToArray(getLhsByVariablePrimitive(x));
+        return array;
+    }
+
+    public static synchronized double getLhsValueAt(int y, int x) {
+        double d;
+        if (y > -1 && y < constraints.size()) {
+            double[] coeffs = constraints.get(y).getCoefficients().toArray();
+            if (x > -1 && x < point.length) {
+                d = coeffs[x] * point[x];
+            } else {
+                throw new IllegalStateException(x + "is out of range");
+            }
+        } else {
+            throw new IllegalStateException(y + "is out of range");
+        }
+        return d;
+    }
+
+    public static synchronized Array getRhs() {
+        Array array = doubleToArray(getRhsByConstraintPrimitive());
+        return array;
+    }
+
+    public static synchronized double getRhsByConstraint(int y) {
+        double rhsValue = 0;
+        double[] coeffs = constraints.get(y).getCoefficients().toArray();
+        for (int x = 0; x < point.length; x++) {
+            rhsValue += coeffs[x] * point[x];
+        }
+        return rhsValue;
+    }
+
+    //Private methods
+
+    private static double[] getRhsByConstraintPrimitive() {
+        double[] rowArray = new double[constraints.size()];
+        for (int y = 0; y < constraints.size(); y++) {
+            rowArray[y] = getRhsByConstraint(y);
+        }
+        return rowArray;
+    }
+
+    private static double[] getSolutionPointPrimitive() {
+        return point;
+    }
+
+    private static double[] getLhsByConstraintPrimitive(int y) {
+        double[] rowArray = new double[point.length];
+        if (y > -1 && y < constraints.size()) {
+            double[] coeffs = constraints.get(y).getCoefficients().toArray();
+            for (int x = 0; x < point.length; x++) {
+                rowArray[x] = coeffs[x] * point[x];
+            }
+        } else {
+            throw new IllegalStateException(y + "is out of range");
+        }
+        return rowArray;
+    }
+
+    private static double[] getLhsByVariablePrimitive(int x) {
+        double[] columnArray = new double[constraints.size()];
+        if (x > -1 && x < point.length) {
+            for (int y = 0; y < constraints.size(); y++) {
+                double[] coeffs = constraints.get(y).getCoefficients().toArray();
+                columnArray[y] = coeffs[x] * point[x];
+            }
+        } else {
+            throw new IllegalStateException(x + "is out of range");
+        }
+        return columnArray;
+    }
+
+    private static List getStorage(int storageId) {
+        return coefficientsMap.get(storageId);
+    }
+
+    private static double[] listToDoubleArrayPrimitive(List<Double> list) {
+        double[] dar = new double[list.size()];
+        for (int i = 0; i < dar.length; i++) {
+            dar[i] = list.get(i);
         }
         return dar;
     }
 
+    private static Array doubleToArray(double[] dar) {
+        Object[] objects = new Object[dar.length];
+        for (int i = 0; i < dar.length; i++) {
+            objects[i] = dar[i];
+        }
+        Array array = new JDBCArrayBasic(objects, org.hsqldb.types.Type.SQL_DOUBLE);
+        return array;
+    }
 }
+
+//Do I need to worry about this?
+//Every class loaded by the VM has exactly one class-level lock
+//A thread must get exclusive access to the class-level lock before entering method

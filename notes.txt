@@ -1,60 +1,19 @@
 This runs fine.
-01_linearprogramming_procedures_01.sql
-04_testProblem01_01.sql
-05_testProblem02_01.sql
-08_runTests_01.sql
-
-This runs fine.
-01_linearprogramming_procedures_01.sql
-02_model_schema.sql
-03_model_procedures_01.sql
-06_testProblem01UsesTables.sql
-
-This runs fine.
-01_linearprogramming_procedures_01.sql
-02_model_schema.sql
-03_model_procedures_01.sql
-07_testProblem02UsesTables.sql
-
-This throws error.
-01_linearprogramming_procedures_01.sql
-02_model_schema.sql
-03_model_procedures_01.sql
-06_testProblem01UserTables.sql
-07_testProblem02UsesTables.sql
---incompatible data type in conversion [SQL State=42561, DB Errorcode=-5561]
-
-This throws error.
-01_linearprogramming_procedures_01.sql
+01_linearprogramming_procedures.sql
 02_model_schema.sql
 03_model_procedures.sql
-07_testProblem02UsesTables.sql
-06_testProblem01UserTables.sql
---incompatible data type in conversion [SQL State=42561, DB Errorcode=-5561]
+04_testProblem01.sql
+05_testProblem02.sql
+06_testProblem03.sql
+07_testProblem04.sql
+08_testProblem05.sql
+09_runTests.sql
+10_testProblem01UsesTables.sql
+11_testProblem02UsesTables.sql
+12_testProblem03UsesTables.sql
+13_testProblem04UsesTables.sql
+14_testProblem05UsesTables.sql
 
-* If I do a "drop schema model cascade" and recreate schema, it runs fine again.
-
---Created new lpmodel class that has new methods (LPModel02)
-
-This runs fine.
-01_linearprogramming_procedures_02.sql
-04_testProblem01_02.sql
-05_testProblem02_02.sql
-08_runTests_02.sql
-
-This runs fine.
-01_linearprogramming_procedures_02.sql
-02_model_schema.sql
-03_model_procedures_02.sql
-06_testProblem01UsesTables.sql
-07_testProblem02UsesTables.sql
-
-This runs fine.
-01_linearprogramming_procedures_02.sql
-02_model_schema.sql
-03_model_procedures_02.sql
-07_testProblem02UsesTables.sql
-06_testProblem01UsesTables.sql
-
-
-
+//Do I need to worry about this?
+//Every class loaded by the VM has exactly one class-level lock
+//A thread must get exclusive access to the class-level lock before entering method

@@ -6,93 +6,93 @@ CREATE PROCEDURE  clearModel()
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.clearModel'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.clearModel'
 /
 CREATE PROCEDURE  addLinearObjectiveFunction(IN storageId INTEGER)
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.addLinearObjectiveFunction'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addLinearObjectiveFunction'
 /
 CREATE PROCEDURE  addLinearConstraint(IN storageId INTEGER, IN rel INT, IN amount DOUBLE)
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.addLinearConstraint'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addLinearConstraint'
 /
 CREATE PROCEDURE  setMaximize()
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.setMaximize'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.setMaximize'
 /
 CREATE PROCEDURE  solveModel()
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.solveModel'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.solveModel'
 /
 CREATE FUNCTION printModel() RETURNS LONGVARCHAR
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.printModel'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.printModel'
 /
 CREATE PROCEDURE  addCoefficientSpace(IN storageId INTEGER)
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.addCoefficientSpace'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addCoefficientSpace'
 /
 CREATE PROCEDURE  setCoefficientSpace(IN storageId INTEGER)
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.setCoefficientSpace'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.setCoefficientSpace'
 /
 CREATE PROCEDURE  addCoefficient(IN coefficient DOUBLE)
 NO SQL
 LANGUAGE JAVA 
 PARAMETER STYLE JAVA
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.addCoefficient'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.addCoefficient'
 /
 CREATE FUNCTION getSolutionPoint() RETURNS DOUBLE ARRAY
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getSolutionPoint'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getSolutionPoint'
 /
 CREATE FUNCTION getSolutionPointValueAt(IN x INTEGER) RETURNS DOUBLE
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getSolutionPointValueAt'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getSolutionPointValueAt'
 /
 CREATE FUNCTION getSolutionCost() RETURNS DOUBLE
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getSolutionCost'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getSolutionCost'
 /
 CREATE FUNCTION getVariableCount() RETURNS INTEGER
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getVariableCount'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getVariableCount'
 /
 CREATE FUNCTION getConstraintCount() RETURNS INTEGER
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getConstraintCount'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getConstraintCount'
 /
 CREATE FUNCTION getLhsByConstraint(IN y INTEGER) RETURNS DOUBLE ARRAY
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getLhsByConstraint'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getLhsByConstraint'
 /
 CREATE FUNCTION getLhsByVariable(IN x INTEGER) RETURNS DOUBLE ARRAY
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getLhsByVariable'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getLhsByVariable'
 /
 CREATE FUNCTION getLhsValueAt(IN y INTEGER, IN x INTEGER) RETURNS DOUBLE
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getLhsValueAt'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getLhsValueAt'
 /
 CREATE FUNCTION getRhs() RETURNS DOUBLE ARRAY
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getRhs'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getRhs'
 /
 CREATE FUNCTION getRhsByConstraint(IN y INTEGER) RETURNS DOUBLE
 LANGUAGE JAVA DETERMINISTIC NO SQL
-EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel02.getRhsByConstraint'
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModel.getRhsByConstraint'
 /
 
 
