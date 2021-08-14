@@ -1,26 +1,29 @@
 SET SCHEMA Model;
---ProblemId, ProblemName, LpModel
-call Problem_Merge(0,'Veggies and Beans Salad Problem','Empty',-1.0);
+--ProblemId, ProblemName
+call deleteProblem(0);
+call addProblem(0,'Veggies and Beans Salad Problem');
 --ProblemId,VariableId, VariableName
-call Variable_Merge(0,0,'Beans',-1);
-call Variable_Merge(0,1,'Veggies',-1);
---ProblemId, ConstraintId, ConstraintName, ConstraintValue,Relationship
-call ConstraintRhs_Merge(0,0,'Fiber Constraint',40.0,1);
-call ConstraintRhs_Merge(0,1,'Veggie/Bean Ratio',0.0,3);
---ProblemId, ConstraintId, VariableId, CoefficientValue, SolutionValue
-call ConstraintLhs_Merge(0,0,0,0.09,-1.0);
-call ConstraintLhs_Merge(0,0,1,0.04,-1.0);
-call ConstraintLhs_Merge(0,1,0,-2.00,-1.0);
-call ConstraintLhs_Merge(0,1,1,1.00,-1.0);
---ProblemId, VariableId, ConstraintLhsValue
-call Objective_Merge(0,0,0.002);
-call Objective_Merge(0,1,0.004);
+call addVariable(0,0,'Beans');
+call addVariable(0,1,'Veggies');
+--ProblemId, VariableId, CoefficientValue
+call addObjectiveCoefficient(0,0,0.002);
+call addObjectiveCoefficient(0,1,0.004);
+--ProblemId, ConstraintId, ConstraintName,Relationship,ConstraintValue
+call addConstraint(0,0,'Fiber Constraint',1,40.0);
+--ProblemId, ConstraintId, VariableId, CoefficientValue
+call addConstraintCoefficient(0,0,0,0.09);
+call addConstraintCoefficient(0,0,1,0.04);
+--ProblemId, ConstraintId, ConstraintName,Relationship,ConstraintValue
+call addConstraint(0,1,'Veggie/Bean Ratio',3,0.0);
+--ProblemId, ConstraintId, VariableId, CoefficientValue
+call addConstraintCoefficient(0,1,0,-2.00);
+call addConstraintCoefficient(0,1,1,1.00);
 --Run
 CALL LinearProgramming.clearModel();
 call model.solveModel(0);
 --Save
 call model.saveModel(0);
 --Print
-call model.Problem_Select(0);
-call model.Variable_Select(0);
-call model.ConstraintLhs_Select(0);
+call model.getProblemValue(0);
+call model.getVariableValue(0);
+call model.getConstraintValue(0);

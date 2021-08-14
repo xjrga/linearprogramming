@@ -1,23 +1,28 @@
 SET SCHEMA Model;
 --ProblemId, ProblemName, LpModel,ProblemCost
-call Problem_Merge(1,'Maximum contribution to overheads and profits','Empty',-1.0);
+call deleteProblem(1);
+call addProblem(1,'Maximum contribution to overheads and profits');
 --ProblemId,VariableId, VariableName
-call Variable_Merge(1,2,'Product X',-1.0);
-call Variable_Merge(1,3,'Product Y',-1.0);
+call addVariable(1,0,'Product X');
+call addVariable(1,1,'Product Y');
 --ProblemId, VariableId, CoefficientValue
-call Objective_Merge(1,2,300.0);
-call Objective_Merge(1,3,200.0);
---ProblemId, ConstraintId, ConstraintName, ConstraintValue,Relationship
-call ConstraintRhs_Merge(1,2,'Process 1',32.0,2);
-call ConstraintRhs_Merge(1,3,'Process 2',30.0,2);
-call ConstraintRhs_Merge(1,4,'Process 3',40.0,2);
+call addObjectiveCoefficient(1,0,300);
+call addObjectiveCoefficient(1,1,200);
+--ProblemId, ConstraintId, ConstraintName, Relationship, ConstraintValue
+call addConstraint(1,0,'Process 1',2,32);
 --ProblemId, ConstraintId, VariableId, CoefficientValue, SolutionValue
-call ConstraintLhs_Merge(1,2,2,8.0,-1.0);
-call ConstraintLhs_Merge(1,2,3,4.0,-1.0);
-call ConstraintLhs_Merge(1,3,2,6.0,-1.0);
-call ConstraintLhs_Merge(1,3,3,5.0,-1.0);
-call ConstraintLhs_Merge(1,4,2,5.0,-1.0);
-call ConstraintLhs_Merge(1,4,3,8.0,-1.0);
+call addConstraintCoefficient(1,0,0,8);
+call addConstraintCoefficient(1,0,1,4);
+--ProblemId, ConstraintId, ConstraintName, Relationship, ConstraintValue
+call addConstraint(1,1,'Process 2',2,30);
+--ProblemId, ConstraintId, VariableId, CoefficientValue, SolutionValue
+call addConstraintCoefficient(1,1,0,6);
+call addConstraintCoefficient(1,1,1,5);
+--ProblemId, ConstraintId, ConstraintName, Relationship, ConstraintValue
+call addConstraint(1,2,'Process 3',2,40);
+--ProblemId, ConstraintId, VariableId, CoefficientValue, SolutionValue
+call addConstraintCoefficient(1,2,0,5);
+call addConstraintCoefficient(1,2,1,8);
 --Run
 CALL LinearProgramming.clearModel();
 CALL LinearProgramming.setMaximize();
@@ -25,7 +30,7 @@ call model.solveModel(1);
 --Save
 call model.saveModel(1);
 --Print
-call model.Problem_Select(1);
-call model.Variable_Select(1);
-call model.ConstraintLhs_Select(1);
+call model.getProblemValue(1);
+call model.getVariableValue(1);
+call model.getConstraintValue(1);
 

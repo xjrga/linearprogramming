@@ -1,3 +1,5 @@
+DROP SCHEMA Model IF EXISTS CASCADE;
+
 CREATE SCHEMA Model;
 
 SET SCHEMA Model;
@@ -16,8 +18,8 @@ CREATE TABLE ConstraintRhs
 ProblemId INTEGER,
 ConstraintId INTEGER,
 ConstraintName LONGVARCHAR,
-ConstraintValue DOUBLE,
 ConstraintRelationship INTEGER,
+ConstraintValue DOUBLE,
 CONSTRAINT ConstraintRhs_primaryKey PRIMARY KEY (ProblemId, ConstraintId)
 );
 
