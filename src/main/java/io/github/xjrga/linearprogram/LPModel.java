@@ -40,11 +40,9 @@ public class LPModel {
     private static List currentStorage;
 
     public LPModel() {
-//        synchronized (LPModel.class) {
-//        }
     }
 
-    public static synchronized void clearModel() {
+    public static void clearModel() {
         goalType = GoalType.MINIMIZE;
         constraints.clear();
         linearObjectiveFunction = null;
@@ -55,14 +53,15 @@ public class LPModel {
         currentStorage = null;
     }
 
-    public static synchronized void addLinearObjectiveFunction(int storageId) {
+    public static void addLinearObjectiveFunction(int storageId) {
         double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         byte constantTerm = 0;
         linearObjectiveFunction = new LinearObjectiveFunction(coefficients, constantTerm);
         lpFormat.objectiveToLp(coefficients);
+        printThreadInfo("addLinearObjectiveFunction");
     }
 
-    public static synchronized void addLinearConstraint(int storageId, int rel, double amount) {
+    public static void addLinearConstraint(int storageId, int rel, double amount) {
         Relationship relationship = null;
         switch (rel) {
             case 1:
@@ -81,14 +80,16 @@ public class LPModel {
         double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
         constraints.add(new LinearConstraint(coefficients, relationship, amount));
         lpFormat.constraintToLp(coefficients, rel, amount);
+        printThreadInfo("addLinearConstraint");
     }
 
-    public static synchronized void setMaximize() {
+    public static void setMaximize() {
         goalType = GoalType.MAXIMIZE;
         lpFormat.setMaximize();
+        printThreadInfo("setMaximize");
     }
 
-    public static synchronized void solveModel() {
+    public static void solveModel() {
         SimplexSolver s = new SimplexSolver();
         LinearConstraintSet linearConstraintSet = new LinearConstraintSet(constraints);
         NonNegativeConstraint nonNegativeConstraint = new NonNegativeConstraint(true);
@@ -96,62 +97,74 @@ public class LPModel {
         PointValuePair optimize = s.optimize(data);
         point = optimize.getPoint();
         cost = optimize.getSecond();
+        printThreadInfo("solveModel");
     }
 
-    public static synchronized String printModel() {
+    public static String printModel() {
+        printThreadInfo("printModel");
         return lpFormat.getModel();
     }
 
-    public static synchronized void addCoefficientSpace(int storageId) {
+    public static void addCoefficientSpace(int storageId) {
         coefficientsMap.put(storageId, new ArrayList<Double>());
+        printThreadInfo("addCoefficientSpace");
     }
 
-    public static synchronized void setCoefficientSpace(int storageId) {
+    public static void setCoefficientSpace(int storageId) {
         currentStorage = getStorage(storageId);
+        printThreadInfo("setCoefficientSpace");
     }
 
-    public static synchronized void addCoefficient(double coefficient) {
+    public static void addCoefficient(double coefficient) {
         currentStorage.add(coefficient);
+        printThreadInfo("addCoefficient");
     }
 
-    public static synchronized Array getSolutionPoint() {
+    public static Array getSolutionPoint() {
         Array array = doubleToArray(getSolutionPointPrimitive());
+        printThreadInfo("getSolutionPoint");
         return array;
     }
 
-    public static synchronized double getSolutionPointValueAt(int x) {
+    public static double getSolutionPointValueAt(int x) {
         double d = -1;
         if (x > -1 && x < point.length) {
             d = point[x];
         } else {
             throw new IllegalStateException(x + "is out of range");
         }
+        printThreadInfo("getSolutionPointValueAt");
         return d;
     }
 
-    public static synchronized double getSolutionCost() {
+    public static double getSolutionCost() {
+        printThreadInfo("getSolutionCost");
         return cost;
     }
 
-    public static synchronized int getVariableCount() {
+    public static int getVariableCount() {
+        printThreadInfo("getVariableCount");
         return point.length;
     }
 
-    public static synchronized int getConstraintCount() {
+    public static int getConstraintCount() {
+        printThreadInfo("getConstraintCount");
         return constraints.size();
     }
 
-    public static synchronized Array getLhsByConstraint(int y) {
+    public static Array getLhsByConstraint(int y) {
         Array array = doubleToArray(getLhsByConstraintPrimitive(y));
+        printThreadInfo("getLhsByConstraint");
         return array;
     }
 
-    public static synchronized Array getLhsByVariable(int x) {
+    public static Array getLhsByVariable(int x) {
         Array array = doubleToArray(getLhsByVariablePrimitive(x));
+        printThreadInfo("getLhsByVariable");
         return array;
     }
 
-    public static synchronized double getLhsValueAt(int y, int x) {
+    public static double getLhsValueAt(int y, int x) {
         double d;
         if (y > -1 && y < constraints.size()) {
             double[] coeffs = constraints.get(y).getCoefficients().toArray();
@@ -163,20 +176,23 @@ public class LPModel {
         } else {
             throw new IllegalStateException(y + "is out of range");
         }
+        printThreadInfo("getLhsValueAt");
         return d;
     }
 
-    public static synchronized Array getRhs() {
+    public static Array getRhs() {
         Array array = doubleToArray(getRhsByConstraintPrimitive());
+        printThreadInfo("getRhs");
         return array;
     }
 
-    public static synchronized double getRhsByConstraint(int y) {
+    public static double getRhsByConstraint(int y) {
         double rhsValue = 0;
         double[] coeffs = constraints.get(y).getCoefficients().toArray();
         for (int x = 0; x < point.length; x++) {
             rhsValue += coeffs[x] * point[x];
         }
+        printThreadInfo("getRhsByConstraint");
         return rhsValue;
     }
 
@@ -239,6 +255,16 @@ public class LPModel {
         }
         Array array = new JDBCArrayBasic(objects, org.hsqldb.types.Type.SQL_DOUBLE);
         return array;
+    }
+
+    private static void printThreadInfo(String s){
+        try {
+            Thread currentThread = Thread.currentThread();
+            System.out.println(s+":"+System.currentTimeMillis()+","+currentThread.getId()+","+currentThread.getName());
+            //Adjust sleep value for testing
+            Thread.sleep(0);
+        } catch (InterruptedException ex) {
+        }
     }
 }
 

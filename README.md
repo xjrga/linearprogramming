@@ -14,7 +14,7 @@ Requirements:
 
 Build
 
-    07
+    08
 
 Authors
 
@@ -38,5 +38,5 @@ Instructions:
 
 Notes:
    - Look at startDatabase.sh script
-   - linearprograming-07-jar-with-dependencies.jar must be in hsqldb's classpath
+   - linearprograming-08-jar-with-dependencies.jar must be in hsqldb's classpath
     
