@@ -14,6 +14,5 @@ This runs fine.
 13_testProblem04UsesTables.sql
 14_testProblem05UsesTables.sql
 
-//Do I need to worry about this?
-//Every class loaded by the VM has exactly one class-level lock
-//A thread must get exclusive access to the class-level lock before entering method
+//Code does not run properly with multiple threads
+//Try running code using multiple connections
