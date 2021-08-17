@@ -19,7 +19,7 @@ call addConstraint(0,1,'Veggie/Bean Ratio',3,0.0);
 call addConstraintCoefficient(0,1,0,-2.00);
 call addConstraintCoefficient(0,1,1,1.00);
 --Run
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 call model.solveModel(0);
 --Save
 call model.saveModel(0);

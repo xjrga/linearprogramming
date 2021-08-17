@@ -30,7 +30,7 @@ SET v_constraint0_value = 32.0;
 SET v_constraint1_value = 30.0;
 SET v_constraint2_value = 40.0;
 --
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 CALL LinearProgramming.setMaximize();
 --Objective Function: Maximum contribution to overheads and profits
 CALL LinearProgramming.addCoefficientSpace(0);

@@ -31,7 +31,7 @@ call addConstraintCoefficient(3,2,1,3);
 call addConstraintCoefficient(3,2,2,2);
 --
 --Run
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 CALL LinearProgramming.setMaximize();
 call model.solveModel(3);
 --Save

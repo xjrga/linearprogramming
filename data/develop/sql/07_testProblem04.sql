@@ -24,7 +24,7 @@ SET v_geq = 1;
 SET v_leq = 2;
 SET v_eq = 3;
 --
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 CALL LinearProgramming.setMaximize();
 --
 CALL LinearProgramming.addCoefficientSpace(0);

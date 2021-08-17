@@ -19,7 +19,7 @@ call addConstraint(2,1,'Constraint#2',2,120);
 call addConstraintCoefficient(2,1,0,5);
 call addConstraintCoefficient(2,1,1,4);
 --Run
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 CALL LinearProgramming.setMaximize();
 call model.solveModel(2);
 --Save

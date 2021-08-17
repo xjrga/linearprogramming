@@ -28,7 +28,7 @@ SET v_eq = 3;
 SET v_constraint0_value = 40;
 SET v_constraint1_value = 0;
 --
-CALL LinearProgramming.clearModel();
+CALL LinearProgramming.createModel();
 --
 CALL LinearProgramming.addCoefficientSpace(0);
 CALL LinearProgramming.setCoefficientSpace(0);
