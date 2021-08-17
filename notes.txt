@@ -14,5 +14,4 @@ This runs fine.
 13_testProblem04UsesTables.sql
 14_testProblem05UsesTables.sql
 
-//Code does not run properly with multiple threads
 //Try running code using multiple connections
