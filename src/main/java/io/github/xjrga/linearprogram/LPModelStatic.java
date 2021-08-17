@@ -21,6 +21,10 @@ public class LPModelStatic {
 
     }
 
+    public static void clean() {
+        map.remove(getThreadId());
+    }
+
     public static void createModel() {
         map.put(getThreadId(), new LPModelConcrete());
     }

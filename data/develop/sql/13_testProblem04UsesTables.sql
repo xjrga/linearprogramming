@@ -40,3 +40,6 @@ call model.saveModel(3);
 call model.getProblemValue(3);
 call model.getVariableValue(3);
 call model.getConstraintValue(3);
+--
+CALL LinearProgramming.clean();
+--

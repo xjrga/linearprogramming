@@ -57,6 +57,8 @@ OPEN LhsValueAt;
 OPEN Rhs;
 OPEN RhsByConstraint;
 --
+CALL LinearProgramming.clean();
+--
 END;
 /
 

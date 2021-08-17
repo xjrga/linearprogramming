@@ -2,6 +2,12 @@ CREATE SCHEMA LinearProgramming;
 /
 SET SCHEMA LinearProgramming;
 /
+CREATE PROCEDURE  clean()
+NO SQL
+LANGUAGE JAVA 
+PARAMETER STYLE JAVA
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModelStatic.clean'
+/
 CREATE PROCEDURE  createModel()
 NO SQL
 LANGUAGE JAVA 

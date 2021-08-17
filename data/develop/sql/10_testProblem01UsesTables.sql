@@ -27,3 +27,6 @@ call model.saveModel(0);
 call model.getProblemValue(0);
 call model.getVariableValue(0);
 call model.getConstraintValue(0);
+--
+CALL LinearProgramming.clean();
+--
