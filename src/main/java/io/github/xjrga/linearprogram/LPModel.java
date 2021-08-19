@@ -13,6 +13,10 @@ import java.sql.Array;
  */
 public interface LPModel {
 
+    void setNumberOfVariables(int n);
+
+    void setNumberOfConstraints(int n);
+
     void addCoefficient(double coefficient);
 
     void addCoefficientSpace(int storageId);

@@ -38,10 +38,22 @@ public class LPModelConcrete implements LPModel {
     private GoalType goalType = GoalType.MINIMIZE;
     private final Map<Integer, List> coefficientsMap = new HashMap();
     private List<Double> currentStorage = null;
+    private int numberOfVariables = -1;
+    private int numberOfConstraints = -1;
 
     public LPModelConcrete() {
     }
 
+    @Override
+    public void setNumberOfVariables(int n) {
+        this.numberOfVariables = n;
+    }
+
+    @Override
+    public void setNumberOfConstraints(int n) {
+        this.numberOfConstraints = n;
+    }
+    
     @Override
     public void addLinearObjectiveFunction(int storageId) {
         double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
@@ -53,25 +65,30 @@ public class LPModelConcrete implements LPModel {
 
     @Override
     public void addLinearConstraint(int storageId, int rel, double amount) {
-        Relationship relationship = null;
-        switch (rel) {
-            case 1:
-                relationship = Relationship.GEQ;
-                break;
-            case 2:
-                relationship = Relationship.LEQ;
-                break;
-            case 3:
-                relationship = Relationship.EQ;
-                break;
-            default:
-                relationship = Relationship.GEQ;
-                break;
+        int actualNumberOfConstraints = constraints.size();
+        if (actualNumberOfConstraints < numberOfConstraints) {
+            Relationship relationship = null;
+            switch (rel) {
+                case 1:
+                    relationship = Relationship.GEQ;
+                    break;
+                case 2:
+                    relationship = Relationship.LEQ;
+                    break;
+                case 3:
+                    relationship = Relationship.EQ;
+                    break;
+                default:
+                    relationship = Relationship.GEQ;
+                    break;
+            }
+            double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
+            constraints.add(new LinearConstraint(coefficients, relationship, amount));
+            lpFormat.constraintToLp(coefficients, rel, amount);
+            //printThreadInfo("addLinearConstraint");
+        } else {
+            throw new IllegalStateException(actualNumberOfConstraints + " is out of range");
         }
-        double[] coefficients = listToDoubleArrayPrimitive(getStorage(storageId));
-        constraints.add(new LinearConstraint(coefficients, relationship, amount));
-        lpFormat.constraintToLp(coefficients, rel, amount);
-        //printThreadInfo("addLinearConstraint");
     }
 
     @Override
@@ -101,8 +118,13 @@ public class LPModelConcrete implements LPModel {
 
     @Override
     public void addCoefficientSpace(int storageId) {
-        coefficientsMap.put(storageId, new ArrayList<Double>());
-        //printThreadInfo("addCoefficientSpace");
+        int actualNumberOfConstraints = constraints.size();
+        if (actualNumberOfConstraints < numberOfConstraints) {
+            coefficientsMap.put(storageId, new ArrayList<Double>());
+            //printThreadInfo("addCoefficientSpace");
+        } else {
+            throw new IllegalStateException(actualNumberOfConstraints + " is out of range");
+        }
     }
 
     @Override
@@ -127,7 +149,7 @@ public class LPModelConcrete implements LPModel {
     @Override
     public double getSolutionPointValueAt(int x) {
         double d = -1;
-        if (x > -1 && x < point.length) {
+        if (x > -1 && x < numberOfVariables) {
             d = point[x];
         } else {
             throw new IllegalStateException(x + "is out of range");
@@ -145,13 +167,13 @@ public class LPModelConcrete implements LPModel {
     @Override
     public int getVariableCount() {
         //printThreadInfo("getVariableCount");
-        return point.length;
+        return numberOfVariables;
     }
 
     @Override
     public int getConstraintCount() {
         //printThreadInfo("getConstraintCount");
-        return constraints.size();
+        return numberOfConstraints;
     }
 
     @Override
@@ -171,9 +193,9 @@ public class LPModelConcrete implements LPModel {
     @Override
     public double getLhsValueAt(int y, int x) {
         double d;
-        if (y > -1 && y < constraints.size()) {
+        if (y > -1 && y < numberOfConstraints) {
             double[] coeffs = constraints.get(y).getCoefficients().toArray();
-            if (x > -1 && x < point.length) {
+            if (x > -1 && x < numberOfVariables) {
                 d = coeffs[x] * point[x];
             } else {
                 throw new IllegalStateException(x + "is out of range");
@@ -196,7 +218,7 @@ public class LPModelConcrete implements LPModel {
     public double getRhsByConstraint(int y) {
         double rhsValue = 0;
         double[] coeffs = constraints.get(y).getCoefficients().toArray();
-        for (int x = 0; x < point.length; x++) {
+        for (int x = 0; x < numberOfVariables; x++) {
             rhsValue += coeffs[x] * point[x];
         }
         //printThreadInfo("getRhsByConstraint");
@@ -204,10 +226,9 @@ public class LPModelConcrete implements LPModel {
     }
 
     //Private methods
-
     private double[] getRhsByConstraintPrimitive() {
-        double[] rowArray = new double[constraints.size()];
-        for (int y = 0; y < constraints.size(); y++) {
+        double[] rowArray = new double[numberOfConstraints];
+        for (int y = 0; y < numberOfConstraints; y++) {
             rowArray[y] = getRhsByConstraint(y);
         }
         return rowArray;
@@ -218,10 +239,10 @@ public class LPModelConcrete implements LPModel {
     }
 
     private double[] getLhsByConstraintPrimitive(int y) {
-        double[] rowArray = new double[point.length];
-        if (y > -1 && y < constraints.size()) {
+        double[] rowArray = new double[numberOfVariables];
+        if (y > -1 && y < numberOfConstraints) {
             double[] coeffs = constraints.get(y).getCoefficients().toArray();
-            for (int x = 0; x < point.length; x++) {
+            for (int x = 0; x < numberOfVariables; x++) {
                 rowArray[x] = coeffs[x] * point[x];
             }
         } else {
@@ -231,9 +252,9 @@ public class LPModelConcrete implements LPModel {
     }
 
     private double[] getLhsByVariablePrimitive(int x) {
-        double[] columnArray = new double[constraints.size()];
-        if (x > -1 && x < point.length) {
-            for (int y = 0; y < constraints.size(); y++) {
+        double[] columnArray = new double[numberOfConstraints];
+        if (x > -1 && x < numberOfVariables) {
+            for (int y = 0; y < numberOfConstraints; y++) {
                 double[] coeffs = constraints.get(y).getCoefficients().toArray();
                 columnArray[y] = coeffs[x] * point[x];
             }
@@ -264,10 +285,10 @@ public class LPModelConcrete implements LPModel {
         return array;
     }
 
-    private void printThreadInfo(String s){
+    private void printThreadInfo(String s) {
         try {
             Thread currentThread = Thread.currentThread();
-            System.out.println(s+":"+System.currentTimeMillis()+","+currentThread.getId()+","+currentThread.getName());
+            System.out.println(s + ":" + System.currentTimeMillis() + "," + currentThread.getId() + "," + currentThread.getName());
             //Adjust sleep value for testing
             Thread.sleep(0);
         } catch (InterruptedException ex) {

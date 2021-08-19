@@ -2,6 +2,18 @@ CREATE SCHEMA LinearProgramming;
 /
 SET SCHEMA LinearProgramming;
 /
+CREATE PROCEDURE  setNumberOfVariables(IN n INTEGER)
+NO SQL
+LANGUAGE JAVA 
+PARAMETER STYLE JAVA
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModelStatic.setNumberOfVariables'
+/
+CREATE PROCEDURE  setNumberOfConstraints(IN n INTEGER)
+NO SQL
+LANGUAGE JAVA 
+PARAMETER STYLE JAVA
+EXTERNAL NAME 'CLASSPATH:io.github.xjrga.linearprogram.LPModelStatic.setNumberOfConstraints'
+/
 CREATE PROCEDURE  clean()
 NO SQL
 LANGUAGE JAVA 

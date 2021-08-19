@@ -20,6 +20,10 @@ call addConstraintCoefficient(0,1,0,-2.00);
 call addConstraintCoefficient(0,1,1,1.00);
 --Run
 CALL LinearProgramming.createModel();
+--
+CALL LinearProgramming.setNumberOfVariables(2);
+CALL LinearProgramming.setNumberOfConstraints(2);
+--
 call model.solveModel(0);
 --Save
 call model.saveModel(0);

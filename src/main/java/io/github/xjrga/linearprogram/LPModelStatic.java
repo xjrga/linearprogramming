@@ -21,6 +21,18 @@ public class LPModelStatic {
 
     }
 
+    public static void setNumberOfVariables(int n)
+    {
+        LPModelConcrete lpm = map.get(getThreadId());
+        lpm.setNumberOfVariables(n);
+    }
+
+    public static void setNumberOfConstraints(int n)
+    {
+        LPModelConcrete lpm = map.get(getThreadId());
+        lpm.setNumberOfConstraints(n);
+    }
+
     public static void clean() {
         map.remove(getThreadId());
     }
